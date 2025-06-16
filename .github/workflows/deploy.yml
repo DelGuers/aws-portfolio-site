@@ -23,8 +23,10 @@ jobs:
       run: aws s3 sync . s3://stevedel.com --delete
 
     - name: Invalidate CloudFront cache (optional)
-      if: ${{ secrets.DISTRIBUTION_ID != '' }}
+      if: env.DISTRIBUTION_ID
+      env:
+        DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID }}
       run: |
         aws cloudfront create-invalidation \
-          --distribution-id ${{ secrets.DISTRIBUTION_ID }} \
+          --distribution-id $DISTRIBUTION_ID \
           --paths "/*"
